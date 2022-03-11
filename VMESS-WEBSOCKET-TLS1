@@ -1,0 +1,165 @@
+{
+  "dns": {
+    "hosts": {},
+    "servers": [
+      {
+        "address": "tls://dns.google",
+        "concurrency": true
+      },
+      {
+        "address": "localhost",
+        "concurrency": true,
+        "domains": [
+          "full:speed.cloudflare.com",
+          "full:dns.google"
+        ],
+        "skipFallback": true
+      }
+    ]
+  },
+  "inbounds": [
+    {
+      "listen": "127.0.0.1",
+      "port": 10808,
+      "protocol": "socks",
+      "settings": {
+        "auth": "noauth",
+        "udp": true,
+        "userLevel": 8
+      },
+      "sniffing": {
+        "destOverride": [
+          "http",
+          "tls"
+        ],
+        "enabled": false
+      },
+      "tag": "socks1"
+    },
+    {
+      "listen": "127.0.0.1",
+      "port": 10809,
+      "protocol": "http",
+      "settings": {
+        "userLevel": 8
+      },
+      "tag": "http1"
+    },
+    {
+      "listen": "127.0.0.1",
+      "port": 2080,
+      "protocol": "socks",
+      "settings": {
+        "auth": "noauth",
+        "udp": true
+      },
+      "tag": "socks"
+    },
+    {
+      "listen": "127.0.0.1",
+      "port": 6450,
+      "protocol": "dokodemo-door",
+      "settings": {
+        "address": "1.0.0.1",
+        "network": "tcp,udp",
+        "port": 53
+      },
+      "tag": "dns-in"
+    }
+  ],
+  "log": {
+    "loglevel": "error"
+  },
+  "outbounds": [
+    {
+      "mux": {
+        "concurrency": 8,
+        "enabled": true
+      },
+      "protocol": "vmess",
+      "settings": {
+        "vnext": [
+          {
+            "address": "slxray.akbar-store.me",
+            "port": 8443,
+            "users": [
+              {
+                "encryption": "",
+                "flow": "",
+                "id": "25e5e6cb-81f3-4b70-b741-7bb1bad1b205",
+                "level": 8,
+                "security": "auto"
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "ws",
+        "security": "tls",
+        "tlsSettings": {
+          "allowInsecure": true,
+          "serverName": "v27.tiktokcdn.com"
+        },
+        "wsSettings": {
+          "headers": {
+            "Host": "v27.tiktokcdn.com"
+          },
+          "path": "/vmess/"
+        }
+      },
+      "tag": "SL-VMESS-CUSTOM1"
+    },
+    {
+      "protocol": "freedom",
+      "tag": "direct"
+    },
+    {
+      "protocol": "freedom",
+      "tag": "bypass"
+    },
+    {
+      "protocol": "blackhole",
+      "tag": "block"
+    },
+    {
+      "protocol": "dns",
+      "settings": {
+        "address": "dns.google",
+        "userLevel": 1
+      },
+      "tag": "dns-out"
+    }
+  ],
+  "policy": {
+    "levels": {
+      "1": {
+        "connIdle": 30
+      }
+    },
+    "system": {
+      "statsOutboundDownlink": true,
+      "statsOutboundUplink": true
+    }
+  },
+  "routing": {
+    "domainStrategy": "AsIs",
+    "rules": [
+      {
+        "inboundTag": [
+          "dns-in"
+        ],
+        "outboundTag": "dns-out",
+        "type": "field"
+      },
+      {
+        "outboundTag": "dns-out",
+        "protocol": [
+          "dns"
+        ],
+        "type": "field"
+      }
+    ]
+  },
+  "stats": {}
+}
