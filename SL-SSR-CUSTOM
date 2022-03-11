@@ -95,7 +95,7 @@
           "tcpKeepAliveInterval": 10
         }
       },
-      "tag": "proxy-global-2"
+      "tag": "SL-SSR"
     },
     {
       "protocol": "freedom",
