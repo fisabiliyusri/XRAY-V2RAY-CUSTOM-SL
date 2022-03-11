@@ -101,7 +101,7 @@
           "serverName": "googlevideo.com"
         }
       },
-      "tag": "proxy-global-1"
+      "tag": "SL-VLESS-gRPC1"
     },
     {
       "protocol": "freedom",
